@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>우리나라 정부 기관 — 2차시 수업 자료</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans KR', sans-serif; background: #f8f7f4; color: #1a1a1a; min-height: 100vh; }
+
+.lesson-container { max-width: 860px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+.subtitle { font-size: 14px; color: #666; margin-bottom: 2rem; }
+
+.tab-bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #e0ded8;
+  margin-bottom: 2rem;
+  background: #fff;
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+}
+.tab-btn {
+  flex: 1;
+  padding: 14px 16px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 400;
+  color: #888;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.tab-btn.active { color: #1a1a1a; border-bottom: 2px solid #1a1a1a; font-weight: 600; background: #fff; }
+.tab-btn:hover:not(.active) { color: #1a1a1a; background: #f1efe8; }
+
+.lesson-section { display: none; }
+.lesson-section.active { display: block; }
+
+.section-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+.section-desc { font-size: 14px; color: #555; margin-bottom: 1.5rem; line-height: 1.7; }
+
+.organ-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+.organ-card {
+  background: #fff;
+  border: 1px solid #e0ded8;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.organ-card:hover { border-color: #bbb; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.organ-card.selected.blue { border: 2px solid #185FA5; }
+.organ-card.selected.teal { border: 2px solid #0F6E56; }
+.organ-card.selected.coral { border: 2px solid #993C1D; }
+.organ-card.selected.purple { border: 2px solid #534AB7; }
+
+.organ-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px; }
+.icon-blue { background: #E6F1FB; }
+.icon-teal { background: #E1F5EE; }
+.icon-coral { background: #FAECE7; }
+.icon-purple { background: #EEEDFE; }
+
+.organ-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.organ-tag { font-size: 12px; padding: 2px 8px; border-radius: 4px; display: inline-block; }
+.tag-blue { background: #E6F1FB; color: #185FA5; }
+.tag-teal { background: #E1F5EE; color: #0F6E56; }
+.tag-coral { background: #FAECE7; color: #993C1D; }
+.tag-purple { background: #EEEDFE; color: #534AB7; }
+
+.detail-panel {
+  background: #f1efe8;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: none;
+  animation: fadeIn 0.2s ease;
+}
+.detail-panel.visible { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+.detail-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+.detail-title { font-size: 16px; font-weight: 600; }
+.detail-body { font-size: 14px; line-height: 1.8; color: #444; }
+
+.role-list { margin-top: 0.75rem; padding-left: 0; list-style: none; }
+.role-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid #e0ded8;
+  font-size: 13px;
+  color: #555;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.role-list li:last-child { border-bottom: none; }
+.role-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+
+.quiz-card {
+  background: #fff;
+  border: 1px solid #e0ded8;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 12px;
+}
+.quiz-q { font-size: 15px; font-weight: 600; margin-bottom: 1rem; line-height: 1.6; }
+.quiz-num { font-size: 12px; color: #888; margin-bottom: 6px; }
+.quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.quiz-opt {
+  padding: 10px 12px;
+  border: 1px solid #e0ded8;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #fff;
+  color: #1a1a1a;
+  text-align: left;
+  transition: all 0.15s;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.quiz-opt:hover:not(:disabled) { border-color: #aaa; background: #f8f7f4; }
+.quiz-opt.correct { background: #EAF3DE; border-color: #3B6D11; color: #27500A; }
+.quiz-opt.wrong { background: #FCEBEB; border-color: #A32D2D; color: #791F1F; }
+.quiz-opt.show-correct { background: #EAF3DE; border-color: #3B6D11; color: #27500A; }
+
+.quiz-feedback { font-size: 13px; margin-top: 10px; padding: 8px 12px; border-radius: 8px; display: none; line-height: 1.5; }
+.quiz-feedback.correct-fb { background: #EAF3DE; color: #27500A; display: block; }
+.quiz-feedback.wrong-fb { background: #FCEBEB; color: #791F1F; display: block; }
+
+.score-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: #f1efe8;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+.score-label { font-size: 13px; color: #666; }
+.score-val { font-size: 16px; font-weight: 600; }
+
+.power-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border: 1px solid #e0ded8;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.power-col { padding: 1rem; border-right: 1px solid #e0ded8; text-align: center; }
+.power-col:last-child { border-right: none; }
+.power-col-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.power-col-sub { font-size: 12px; color: #666; margin-bottom: 12px; }
+.power-item { font-size: 12px; padding: 4px 8px; border-radius: 4px; margin-bottom: 4px; }
+
+.check-activity { display: grid; gap: 10px; margin-bottom: 1.5rem; }
+.check-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #e0ded8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fff;
+}
+.check-item:hover { border-color: #aaa; }
+.check-item.checked { background: #f1efe8; }
+.check-box {
+  width: 20px; height: 20px; border: 1.5px solid #bbb;
+  border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; color: transparent; font-size: 13px;
+}
+.check-item.checked .check-box { background: #1a1a1a; border-color: #1a1a1a; color: #fff; }
+.check-text { font-size: 13px; line-height: 1.6; color: #555; }
+.check-item.checked .check-text { color: #1a1a1a; }
+
+.btn-reset {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  color: #1a1a1a;
+  transition: all 0.15s;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.btn-reset:hover { background: #f1efe8; }
+
+.divider { height: 1px; background: #e0ded8; margin: 1.5rem 0; }
+.hint-box { background: #E6F1FB; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #185FA5; margin-bottom: 1rem; line-height: 1.5; }
+
+.check3-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
+.check3-card { text-align: center; padding: 12px; background: #f1efe8; border-radius: 8px; }
+
+@media (max-width: 600px) {
+  .quiz-options { grid-template-columns: 1fr; }
+  .power-grid { grid-template-columns: 1fr; }
+  .power-col { border-right: none; border-bottom: 1px solid #e0ded8; }
+  .power-col:last-child { border-bottom: none; }
+  .check3-grid { grid-template-columns: 1fr; }
+  .organ-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="lesson-container">
+
+<h1>우리나라의 국가 기관</h1>
+<p class="subtitle">중학교 1학년 사회 — 권력분립과 국가기관의 역할</p>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab(1)">
+    1차시&nbsp;<span style="font-size:12px;color:#888;">정부형태와 행정부</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab(2)">
+    2차시&nbsp;<span style="font-size:12px;color:#888;">국회·법원·헌법재판소</span>
+  </button>
+</div>
+
+<!-- ====== 1차시 ====== -->
+<div id="lesson1" class="lesson-section active">
+
+  <p class="section-title">우리나라의 정부 형태와 행정부</p>
+  <p class="section-desc">우리나라는 어떤 정부 형태일까요? 대통령과 행정부가 하는 일을 탐색해봅시다.</p>
+
+  <div class="hint-box">📌 아래 카드를 클릭하면 각 기관의 역할을 자세히 볼 수 있어요.</div>
+
+  <div class="organ-grid">
+    <div class="organ-card blue" onclick="showDetail1('president', this)">
+      <div class="organ-icon icon-blue">🏛️</div>
+      <div class="organ-name">대통령</div>
+      <span class="organ-tag tag-blue">국가 원수</span>
+    </div>
+    <div class="organ-card teal" onclick="showDetail1('cabinet', this)">
+      <div class="organ-icon icon-teal">🤝</div>
+      <div class="organ-name">국무회의</div>
+      <span class="organ-tag tag-teal">심의 기구</span>
+    </div>
+    <div class="organ-card coral" onclick="showDetail1('ministry', this)">
+      <div class="organ-icon icon-coral">🗂️</div>
+      <div class="organ-name">행정 각부</div>
+      <span class="organ-tag tag-coral">집행 기관</span>
+    </div>
+    <div class="organ-card purple" onclick="showDetail1('pm', this)">
+      <div class="organ-icon icon-purple">📋</div>
+      <div class="organ-name">국무총리</div>
+      <span class="organ-tag tag-purple">대통령 보좌</span>
+    </div>
+  </div>
+
+  <div id="detail1" class="detail-panel"></div>
+
+  <div class="divider"></div>
+
+  <p style="font-size:15px;font-weight:600;margin-bottom:8px;">우리나라 정부 형태: 대통령제 + 의원내각제 요소</p>
+  <p style="font-size:14px;color:#555;margin-bottom:1rem;line-height:1.7;">순수한 대통령제처럼 대통령이 실질적 행정권을 가지면서도, 의원내각제의 요소(국무총리, 국무회의 등)를 함께 갖춘 <strong>변형된 대통령제</strong>입니다.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem;">
+    <div style="background:#f1efe8;border-radius:8px;padding:1rem;">
+      <p style="font-size:12px;color:#666;margin-bottom:4px;">대통령제 요소</p>
+      <ul style="font-size:13px;line-height:2;padding-left:1rem;">
+        <li>국민이 직접 대통령 선출</li>
+        <li>대통령이 행정부 수반</li>
+        <li>임기 5년, 단임제</li>
+      </ul>
+    </div>
+    <div style="background:#f1efe8;border-radius:8px;padding:1rem;">
+      <p style="font-size:12px;color:#666;margin-bottom:4px;">의원내각제 요소</p>
+      <ul style="font-size:13px;line-height:2;padding-left:1rem;">
+        <li>국무총리 제도</li>
+        <li>국무회의 심의 절차</li>
+        <li>국회의원의 장관 겸직 가능</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <p style="font-size:15px;font-weight:600;margin-bottom:1rem;">✏️ 확인 활동: 대통령의 권한 분류하기</p>
+  <p style="font-size:13px;color:#666;margin-bottom:1rem;">아래 대통령의 권한 중 내가 이해한 항목을 체크해봐요.</p>
+
+  <div class="check-activity">
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text"><strong>법률안 거부권</strong> — 국회가 통과시킨 법률안에 거부 의사를 표명할 수 있다.</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text"><strong>조약 체결·비준권</strong> — 외국과 맺는 조약을 체결하고 비준하는 권한을 가진다.</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text"><strong>국군 통수권</strong> — 대통령은 헌법에 따라 국군의 최고 통수권자이다.</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text"><strong>긴급 명령권</strong> — 국가 위기 시 국회의 집회를 기다릴 여유가 없을 때 명령을 발할 수 있다.</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text"><strong>헌법 개정안 발의권</strong> — 대통령도 헌법 개정을 발의할 수 있다.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <p style="font-size:15px;font-weight:600;margin-bottom:1rem;">📝 1차시 퀴즈</p>
+  <div id="score1" class="score-bar" style="display:none;">
+    <span class="score-label">점수</span>
+    <span class="score-val" id="score1-val">0 / 3</span>
+  </div>
+  <div id="quiz1"></div>
+  <button class="btn-reset" onclick="resetQuiz(1)">↺ 퀴즈 다시 풀기</button>
+</div>
+
+<!-- ====== 2차시 ====== -->
+<div id="lesson2" class="lesson-section">
+
+  <p class="section-title">국회·법원·헌법재판소와 권력분립</p>
+  <p class="section-desc">민주 국가에서 권력을 나누는 이유는 무엇일까요? 세 기관의 역할을 탐색해봅시다.</p>
+
+  <p style="font-size:14px;font-weight:600;margin-bottom:1rem;color:#666;text-align:center;">삼권분립 구조</p>
+  <div class="power-grid">
+    <div class="power-col" style="background:#E6F1FB;">
+      <div class="power-col-name" style="color:#0C447C;">입법부</div>
+      <div class="power-col-sub">법을 만드는 기관</div>
+      <div class="power-item" style="background:#B5D4F4;color:#0C447C;">국회</div>
+      <div style="font-size:11px;color:#185FA5;margin-top:4px;">300인의 국회의원</div>
+    </div>
+    <div class="power-col" style="background:#E1F5EE;">
+      <div class="power-col-name" style="color:#085041;">사법부</div>
+      <div class="power-col-sub">법을 적용하는 기관</div>
+      <div class="power-item" style="background:#9FE1CB;color:#085041;">법원</div>
+      <div style="font-size:11px;color:#0F6E56;margin-top:4px;">대법원·고등·지방법원</div>
+    </div>
+    <div class="power-col" style="background:#EEEDFE;">
+      <div class="power-col-name" style="color:#3C3489;">헌법재판소</div>
+      <div class="power-col-sub">헌법을 수호하는 기관</div>
+      <div class="power-item" style="background:#CECBF6;color:#3C3489;">헌법재판소</div>
+      <div style="font-size:11px;color:#534AB7;margin-top:4px;">9인의 재판관</div>
+    </div>
+  </div>
+
+  <div class="hint-box">📌 카드를 클릭해서 각 기관의 역할을 자세히 알아보세요.</div>
+
+  <div class="organ-grid" style="grid-template-columns:1fr 1fr 1fr;">
+    <div class="organ-card blue" onclick="showDetail2('assembly', this)">
+      <div class="organ-icon icon-blue">📜</div>
+      <div class="organ-name">국회</div>
+      <span class="organ-tag tag-blue">입법 기관</span>
+    </div>
+    <div class="organ-card teal" onclick="showDetail2('court', this)">
+      <div class="organ-icon icon-teal">⚖️</div>
+      <div class="organ-name">법원</div>
+      <span class="organ-tag tag-teal">사법 기관</span>
+    </div>
+    <div class="organ-card purple" onclick="showDetail2('const', this)">
+      <div class="organ-icon icon-purple">🛡️</div>
+      <div class="organ-name">헌법재판소</div>
+      <span class="organ-tag tag-purple">헌법 수호</span>
+    </div>
+  </div>
+
+  <div id="detail2" class="detail-panel"></div>
+
+  <div class="divider"></div>
+
+  <p style="font-size:15px;font-weight:600;margin-bottom:8px;">왜 권력을 나눌까요?</p>
+  <p style="font-size:14px;color:#555;margin-bottom:1rem;line-height:1.7;">한 사람이나 기관이 모든 권력을 갖게 되면 <strong>권력 남용</strong>과 <strong>국민의 자유 침해</strong>가 발생할 수 있습니다. 몽테스키외는 이를 막기 위해 권력을 입법·행정·사법으로 나누고 서로 견제하게 해야 한다고 주장했습니다.</p>
+
+  <div class="check3-grid">
+    <div class="check3-card">
+      <div style="font-size:20px;margin-bottom:6px;">📜</div>
+      <div style="font-size:12px;font-weight:600;">국회 → 행정부</div>
+      <div style="font-size:11px;color:#666;margin-top:4px;line-height:1.5;">국무총리 임명 동의<br>국정감사·조사</div>
+    </div>
+    <div class="check3-card">
+      <div style="font-size:20px;margin-bottom:6px;">🏛️</div>
+      <div style="font-size:12px;font-weight:600;">행정부 → 국회</div>
+      <div style="font-size:11px;color:#666;margin-top:4px;line-height:1.5;">법률안 거부권<br>임시국회 소집 요구</div>
+    </div>
+    <div class="check3-card">
+      <div style="font-size:20px;margin-bottom:6px;">⚖️</div>
+      <div style="font-size:12px;font-weight:600;">사법부 → 행정부</div>
+      <div style="font-size:11px;color:#666;margin-top:4px;line-height:1.5;">위헌법률심판 제청<br>행정 행위 통제</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <p style="font-size:15px;font-weight:600;margin-bottom:1rem;">✏️ 확인 활동: 어느 기관의 일일까요?</p>
+  <p style="font-size:13px;color:#666;margin-bottom:1rem;">아래 사례를 읽고 어느 기관이 담당하는 일인지 맞혀보세요.</p>
+  <div id="matching-area"></div>
+
+  <div class="divider"></div>
+
+  <p style="font-size:15px;font-weight:600;margin-bottom:1rem;">📝 2차시 퀴즈</p>
+  <div id="score2" class="score-bar" style="display:none;">
+    <span class="score-label">점수</span>
+    <span class="score-val" id="score2-val">0 / 3</span>
+  </div>
+  <div id="quiz2"></div>
+  <button class="btn-reset" onclick="resetQuiz(2)">↺ 퀴즈 다시 풀기</button>
+</div>
+
+</div>
+
+<script>
+const detail1Data = {
+  president: {
+    color:'blue', icon:'🏛️', name:'대통령', colorHex:'#0C447C', bgHex:'#E6F1FB', dotColor:'#185FA5',
+    body:'대통령은 <strong>국가 원수</strong>이자 <strong>행정부 수반</strong>입니다. 국민이 직접 선출하며, 임기는 5년 단임제입니다.',
+    roles:[
+      '법률안 거부권 — 국회 통과 법률에 이의를 제기할 수 있음',
+      '조약 체결·비준 — 외국과의 조약을 맺는 권한',
+      '국군 통수권 — 대한민국 군대의 최고 사령관',
+      '긴급명령권 — 국가 위기 시 법률에 준하는 명령 발령',
+    ]
+  },
+  cabinet: {
+    color:'teal', icon:'🤝', name:'국무회의', colorHex:'#085041', bgHex:'#E1F5EE', dotColor:'#0F6E56',
+    body:'국무회의는 대통령·국무총리·국무위원으로 구성되는 <strong>최고 심의 기관</strong>입니다.',
+    roles:[
+      '헌법 개정안·법률안·예산안 심의',
+      '대통령령·총리령 심의',
+      '외교 정책·군사 행동 등 국가 중요 정책 심의',
+    ]
+  },
+  ministry: {
+    color:'coral', icon:'🗂️', name:'행정 각부', colorHex:'#993C1D', bgHex:'#FAECE7', dotColor:'#993C1D',
+    body:'교육부·국방부·외교부 등 <strong>18개 부처</strong>가 행정 각부를 이룹니다. 각 부처 장관은 대통령이 임명합니다.',
+    roles:[
+      '소관 분야 정책 입안·집행',
+      '소속 공무원 지휘·감독',
+      '법령·규칙 제정',
+    ]
+  },
+  pm: {
+    color:'purple', icon:'📋', name:'국무총리', colorHex:'#3C3489', bgHex:'#EEEDFE', dotColor:'#534AB7',
+    body:'국무총리는 <strong>대통령을 보좌</strong>하고 행정 각부를 통할합니다. 국회의 동의를 얻어 대통령이 임명합니다.',
+    roles:[
+      '대통령 궐위·직무 불가 시 권한 대행',
+      '각 행정 부처 장관 임면 건의',
+      '국무회의 부의장으로 국정 심의 참여',
+    ]
+  }
+};
+
+const detail2Data = {
+  assembly: {
+    color:'blue', icon:'📜', name:'국회', colorHex:'#0C447C', bgHex:'#E6F1FB', dotColor:'#185FA5',
+    body:'국회는 국민이 선출한 <strong>300인의 국회의원</strong>으로 구성되는 입법 기관입니다.',
+    roles:[
+      '법률 제정·개정 — 모든 법률은 국회를 통해 만들어짐',
+      '예산안 심의·확정 — 정부 예산을 검토하고 승인',
+      '국정감사 — 행정부 업무 전반을 조사·감독',
+      '조약 비준 동의 — 외국과의 조약에 동의권 행사',
+    ]
+  },
+  court: {
+    color:'teal', icon:'⚖️', name:'법원', colorHex:'#085041', bgHex:'#E1F5EE', dotColor:'#0F6E56',
+    body:'법원은 <strong>민사·형사·행정 재판</strong>을 담당하는 사법 기관입니다. 대법원을 정점으로 고등법원·지방법원이 있습니다.',
+    roles:[
+      '민사 재판 — 개인·단체 간 분쟁 해결',
+      '형사 재판 — 범죄 여부 판단, 형벌 결정',
+      '행정 재판 — 행정 기관의 처분에 대한 쟁송',
+      '위헌 법률 심판 제청 — 재판 중 헌재에 위헌 여부 제청',
+    ]
+  },
+  const: {
+    color:'purple', icon:'🛡️', name:'헌법재판소', colorHex:'#3C3489', bgHex:'#EEEDFE', dotColor:'#534AB7',
+    body:'헌법재판소는 <strong>헌법의 수호자</strong>로서 법률이 헌법에 위반되는지 판단합니다. <strong>9인의 재판관</strong>으로 구성됩니다.',
+    roles:[
+      '위헌 법률 심판 — 법률이 헌법에 어긋나는지 판단',
+      '탄핵 심판 — 고위 공직자 탄핵 인용·기각 결정',
+      '헌법 소원 심판 — 국민의 기본권 침해 구제',
+      '정당 해산 심판 — 위헌 정당 해산 결정',
+    ]
+  }
+};
+
+function showDetail(panelId, data, key) {
+  const panel = document.getElementById(panelId);
+  const d = data[key];
+  panel.innerHTML = `
+    <div class="detail-header">
+      <div class="organ-icon icon-${d.color}" style="background:${d.bgHex}">${d.icon}</div>
+      <div class="detail-title" style="color:${d.colorHex}">${d.name}</div>
+    </div>
+    <div class="detail-body">${d.body}</div>
+    <ul class="role-list">
+      ${d.roles.map(r => `<li><div class="role-dot" style="background:${d.dotColor}"></div>${r}</li>`).join('')}
+    </ul>
+  `;
+  panel.classList.add('visible');
+}
+
+function showDetail1(key, el) {
+  document.querySelectorAll('#lesson1 .organ-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  showDetail('detail1', detail1Data, key);
+}
+function showDetail2(key, el) {
+  document.querySelectorAll('#lesson2 .organ-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  showDetail('detail2', detail2Data, key);
+}
+
+function toggleCheck(el) { el.classList.toggle('checked'); }
+
+function switchTab(n) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === n - 1));
+  document.querySelectorAll('.lesson-section').forEach((s, i) => s.classList.toggle('active', i === n - 1));
+}
+
+const quizData = {
+  1: [
+    { q:'우리나라 대통령의 임기와 연임 가능 여부는?', opts:['4년, 1회 연임 가능','5년, 단임제','5년, 1회 연임 가능','6년, 단임제'], ans:1, fb:'우리나라 대통령은 5년 단임제입니다. 한 번만 대통령을 할 수 있어요.' },
+    { q:'다음 중 의원내각제 요소에 해당하는 것은?', opts:['국민이 대통령을 직접 선출','대통령이 군대를 통수','국무총리 제도 존재','대통령이 행정부 수반'], ans:2, fb:'국무총리 제도는 의원내각제에서 유래한 요소입니다.' },
+    { q:'국회가 통과시킨 법률안을 대통령이 거부할 수 있는 권한은?', opts:['탄핵권','법률안 거부권','입법권','국정감사권'], ans:1, fb:'법률안 거부권은 행정부가 입법부를 견제하는 중요한 수단입니다.' }
+  ],
+  2: [
+    { q:'헌법재판소에서 담당하는 심판이 아닌 것은?', opts:['위헌 법률 심판','탄핵 심판','민사 재판','헌법 소원 심판'], ans:2, fb:'민사 재판은 법원(사법부)의 업무입니다.' },
+    { q:'권력분립의 목적으로 가장 적절한 것은?', opts:['정부 업무의 효율성 향상','국민의 세금 절약','권력 남용 방지와 기본권 보호','대통령 권한 강화'], ans:2, fb:'권력분립의 핵심 목적은 권력 집중을 막아 국민의 자유와 권리를 보호하는 것입니다.' },
+    { q:'국회의 역할이 아닌 것은?', opts:['법률 제정','예산안 심의','국정감사','위헌 정당 해산'], ans:3, fb:'위헌 정당 해산은 헌법재판소의 권한입니다.' }
+  ]
+};
+
+let scores = {1:0, 2:0};
+let answered = {1:[false,false,false], 2:[false,false,false]};
+
+function renderQuiz(n) {
+  const c = document.getElementById('quiz'+n);
+  c.innerHTML = '';
+  scores[n] = 0;
+  answered[n] = [false,false,false];
+  document.getElementById('score'+n).style.display = 'none';
+  quizData[n].forEach((q, qi) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-num">${qi+1} / ${quizData[n].length}</div>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-options">
+        ${q.opts.map((o,oi)=>`<button class="quiz-opt" onclick="checkAnswer(${n},${qi},${oi})" id="q${n}-${qi}-${oi}"><span style="color:#888;margin-right:6px;">${['①','②','③','④'][oi]}</span>${o}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="fb${n}-${qi}">${q.fb}</div>
+    `;
+    c.appendChild(card);
+  });
+}
+
+function checkAnswer(n, qi, selected) {
+  if (answered[n][qi]) return;
+  answered[n][qi] = true;
+  const q = quizData[n][qi];
+  const fb = document.getElementById(`fb${n}-${qi}`);
+  q.opts.forEach((_,oi) => {
+    const btn = document.getElementById(`q${n}-${qi}-${oi}`);
+    btn.disabled = true;
+    if (oi === q.ans) btn.classList.add('show-correct');
+  });
+  const sel = document.getElementById(`q${n}-${qi}-${selected}`);
+  if (selected === q.ans) { sel.classList.add('correct'); fb.className='quiz-feedback correct-fb'; fb.innerHTML='⭕ 정답! '+q.fb; scores[n]++; }
+  else { sel.classList.add('wrong'); fb.className='quiz-feedback wrong-fb'; fb.innerHTML='❌ 틀렸어요. '+q.fb; }
+  if (answered[n].every(Boolean)) {
+    document.getElementById('score'+n).style.display='flex';
+    document.getElementById('score'+n+'-val').textContent=scores[n]+' / '+quizData[n].length;
+  }
+}
+
+function resetQuiz(n) { renderQuiz(n); }
+
+const matchingItems = [
+  { text:'"A씨는 교통사고 피해자로 손해배상 소송을 제기했다."', answer:'법원' },
+  { text:'"국회는 새로운 최저임금법을 통과시켰다."', answer:'국회' },
+  { text:'"헌법재판소는 특정 법률 조항이 국민의 기본권을 침해한다고 결정했다."', answer:'헌법재판소' },
+  { text:'"국회는 고위 공직자에 대한 탄핵안을 가결하였다."', answer:'국회' },
+];
+
+function renderMatching() {
+  const area = document.getElementById('matching-area');
+  area.innerHTML = matchingItems.map((item, i) => `
+    <div style="margin-bottom:10px;background:#fff;border:1px solid #e0ded8;border-radius:8px;padding:12px 14px;">
+      <p style="font-size:13px;line-height:1.6;margin-bottom:8px;color:#555;">${item.text}</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        ${['국회','법원','헌법재판소'].map(o=>`<button class="quiz-opt" style="padding:6px 12px;font-size:12px;" onclick="checkMatch(this,${i},'${o}')">${o}</button>`).join('')}
+      </div>
+      <div style="font-size:12px;margin-top:6px;display:none;" id="mfb${i}"></div>
+    </div>
+  `).join('');
+}
+
+function checkMatch(btn, idx, selected) {
+  btn.parentElement.querySelectorAll('button').forEach(b => { b.disabled=true; if(b.textContent===matchingItems[idx].answer) b.classList.add('show-correct'); });
+  const fb = document.getElementById('mfb'+idx);
+  fb.style.display='block';
+  if (selected===matchingItems[idx].answer) { btn.classList.add('correct'); fb.style.color='#27500A'; fb.textContent='⭕ 정답!'; }
+  else { btn.classList.add('wrong'); fb.style.color='#791F1F'; fb.textContent='❌ 정답은 '+matchingItems[idx].answer+'입니다.'; }
+}
+
+renderQuiz(1);
+renderQuiz(2);
+renderMatching();
+</script>
+</body>
+</html>
